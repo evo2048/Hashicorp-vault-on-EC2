@@ -1,0 +1,79 @@
+- hosts: vault-server
+  remote_user: ubuntu
+  become: yes
+  tasks:
+    - name: Add apt-key
+      apt_key:
+        url: https://apt.releases.hashicorp.com/gpg
+        state: present
+
+    - name: Add repo
+      shell: sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+
+    - name: Install Vault
+      apt:
+        name: vault
+        update_cache: yes
+
+    - name: Stop Vault for reconfig
+      service:
+        name: vault
+        state: stopped
+    
+    - name: Copy config to server
+      copy: src=vault.hcl dest=/etc/vault.d/vault.hcl
+
+    - name: Enable Service
+      service:
+        name: vault
+        state: started
+        enabled: yes
+
+    - name: Insert VAULT_ADDR in /etc/environment
+      lineinfile:
+        path: /etc/environment
+        line: VAULT_ADDR="http://0.0.0.0:8200"
+
+    - name: Insert VAULT_ADDR in /etc/profile
+      lineinfile:
+        path: /etc/profile
+        line: export VAULT_ADDR="http://0.0.0.0:8200"
+
+    - name: Vault init
+      shell: vault operator init > /home/ubuntu/key.txt
+
+    - name: Unseal Vault
+      shell: vault operator unseal $(grep '{{ item }}' /home/ubuntu/key.txt | awk '{print $NF}')
+      with_items:
+        - Key 1
+        - Key 2
+        - Key 3
+
+    - name: Export Token
+      shell: export VAULT_TOKEN="$(grep "Token" /home/ubuntu/key.txt | cut -c 21-)"
+
+    - name: Insert VAULT_TOKEN in /etc/environment
+      lineinfile:
+        path: /etc/environment
+        line: VAULT_TOKEN="$(grep "Token" /home/ubuntu/key.txt | cut -c 21-)"
+      
+    - name: Insert VAULT_TOKEN in /etc/profile
+      lineinfile:
+        path: /etc/profile
+        line: VAULT_TOKEN="$(grep "Token" /home/ubuntu/key.txt | cut -c 21-)"
+
+#    - name: Add user-pass auth
+#      shell: vault auth enable userpass
+
+#    - name: Add admin user to Vault
+#      shell: vault write auth/userpass/users/USERNAME password=CHANGEME policies=admins 
+
+    - name: Copy keys
+      fetch:
+        src: /home/ubuntu/key.txt
+        dest: .
+
+    - name: Remove file (delete file)
+      file:
+        path: /home/ubuntu/key.txt
+        state: absent
