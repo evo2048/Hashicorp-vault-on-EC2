@@ -13,7 +13,7 @@ resource "aws_instance" "Vault_EC2" {
 }
 resource "aws_key_pair" "personal_key" {
   key_name   = "aws_key"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDh+gXOpZvLpry4hLQN3S2UjKTk9aAww61Rd9MTrnvM1jJJkcb6J7K2tTIweS7JGJf/nhZ6JxMDA6Xul7WHIQqO++3wGCqIqKicaKTHBRydvdbXE/WjAyUkpd+W9tARJ56FtDsLWmOHpcwImLdyo4noO/vm/4lZ/tZCNSiwVrWI6+FXo3SC78BZ1BrFvZEtP0D/rVZ6zIfkTL+M/97LoST2xI0yiid7F4gNQyplGT1eVWz5aXy5Y3McUtG/bo2F8+PSIrVV5o6r1uxRnHPA3vGjtQF2BhbOEWM8p10FDlNt3VPjOh0phUsaLldY/ZGYKAPV8kXJv2aYmc/QVK+woipD mrc@loca1host"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDBTQwBFHp3bWgkLZI031vTkVu9Ye/7AOti7ZQH9Se960Y1TcCpnGlVXTrE81BdpiQ7tVlnRydRuJk43KgQsmNRKdHHXOEMikrypzhTwXoOHmvUed5coHCb8z7H6jeef13JHs8L//MVecF89X7YTeW+jCD2TkA6RKZZ2eplAHV2MyWPyZ86ZaUwD/mio4tkXEX/SNVSmQoSf5T/b/R+icIkTy1N949A0ChfqDWtiUNqX4hVFQZXcd+yrAXvnbFPs8qhPGmlgPBPi19iv1gxxkqLVxvuvuzYGOk9jw8FD9xHgDKjrPMSrgxJYMdK+pcyP6/omCthx+pU0hIPZ72h7H8ZY9kNk64k5duR6mfteCKQR9ccRllLFVNVeUfy41xACsYkE+DcLHKPXD4JwoC+XZ4q0tgFJEsymGYBNi+QfRVEOJiGSpM/A0I8Dfdctd80dAYSoC5vJ6/miVlAEO7gV4G6AmPoWPrgOzWy6tk3pTtozNLPU1qft2YtQ8TD0RCTKG8= mrx@admin0"
   tags = {
     "Name" = "Personal key"
   }

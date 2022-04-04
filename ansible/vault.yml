@@ -39,6 +39,10 @@
         path: /etc/profile
         line: export VAULT_ADDR="http://0.0.0.0:8200"
 
+    - name: Reboot machine
+      reboot:
+        msg: "EC2 Reboot"
+
     - name: Vault init
       shell: vault operator init > /home/ubuntu/key.txt
 
@@ -49,31 +53,21 @@
         - Key 2
         - Key 3
 
-    - name: Export Token
-      shell: export VAULT_TOKEN="$(grep "Token" /home/ubuntu/key.txt | cut -c 21-)"
+    - name: Set token on system
+      script: setenv.sh
 
-    - name: Insert VAULT_TOKEN in /etc/environment
-      lineinfile:
-        path: /etc/environment
-        line: VAULT_TOKEN="$(grep "Token" /home/ubuntu/key.txt | cut -c 21-)"
-      
-    - name: Insert VAULT_TOKEN in /etc/profile
-      lineinfile:
-        path: /etc/profile
-        line: VAULT_TOKEN="$(grep "Token" /home/ubuntu/key.txt | cut -c 21-)"
+    - name: Add user-pass auth
+      shell: vault auth enable userpass
 
-#    - name: Add user-pass auth
-#      shell: vault auth enable userpass
-
-#    - name: Add admin user to Vault
-#      shell: vault write auth/userpass/users/USERNAME password=CHANGEME policies=admins 
+    - name: Add admin user to Vault
+      shell: vault write auth/userpass/users/USERNAME password=CHANGEME policies=admins 
 
     - name: Copy keys
       fetch:
         src: /home/ubuntu/key.txt
         dest: .
 
-    - name: Remove file (delete file)
+    - name: Remove key file
       file:
         path: /home/ubuntu/key.txt
         state: absent
